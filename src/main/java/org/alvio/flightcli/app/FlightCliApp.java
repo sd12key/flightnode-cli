@@ -1,6 +1,8 @@
 package org.alvio.flightcli.app;
 
+import org.alvio.flightcli.client.AircraftClient;
 import org.alvio.flightcli.client.CityClient;
+import org.alvio.flightcli.domain.Aircraft;
 import org.alvio.flightcli.domain.City;
 
 import java.net.http.HttpClient;
@@ -15,6 +17,7 @@ public class FlightCliApp {
 
     private final Scanner scanner = new Scanner(System.in);
     private CityClient cityClient;
+    private AircraftClient aircraftClient;
 
     public static void main(String[] args) {
         FlightCliApp app = new FlightCliApp();
@@ -22,16 +25,27 @@ public class FlightCliApp {
         String baseUrl = args.length > 0 ? args[0] : "http://localhost:8080";
         HttpClient sharedHttpClient = HttpClient.newHttpClient();
 
+        // city client setup
         CityClient cityClient = new CityClient();
         cityClient.setServerUrl(baseUrl);
         cityClient.setHttpClient(sharedHttpClient);
-
         app.setCityClient(cityClient);
+
+        // aircraft client setup
+        AircraftClient aircraftClient = new AircraftClient();
+        aircraftClient.setServerUrl(baseUrl);
+        aircraftClient.setHttpClient(sharedHttpClient);
+        app.setAircraftClient(aircraftClient);
+
         app.runMenu();
     }
 
     public void setCityClient(CityClient cityClient) {
         this.cityClient = cityClient;
+    }
+
+    public void setAircraftClient(AircraftClient aircraftClient) {
+        this.aircraftClient = aircraftClient;
     }
 
     public void runMenu() {
@@ -52,6 +66,10 @@ public class FlightCliApp {
                 case "1" -> {
                     System.out.println("\n--> GET /api/cities?show-airports=true\n");
                     queryReport = runCityAirportQuery();
+                }
+                case "3" -> {
+                    System.out.println("\n--> GET /api/aircrafts?show-airports=true\n");
+                    queryReport = runAircraftAirportQuery();
                 }
                 case "0" -> {
                     System.out.println("=========== Goodbye! ==========\n");
@@ -74,4 +92,16 @@ public class FlightCliApp {
             return List.of(msg);
         }
     }
+
+    public List<String> runAircraftAirportQuery() {
+        try {
+            List<Aircraft> aircraftList = aircraftClient.fetchAircraftsWithAirports();
+            return generateStringReport(aircraftList, Aircraft::toDetailedString);
+        } catch (Exception e) {
+            String msg = "Error retrieving aircrafts: " + e.getClass().getSimpleName();
+            if (e.getMessage() != null) msg += " - " + e.getMessage();
+            return List.of(msg);
+        }
+    }
+
 }
