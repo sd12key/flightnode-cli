@@ -17,7 +17,7 @@ public class CityTest {
         assertEquals("NY", city.getState());
         assertEquals(8804190, city.getPopulation());
         assertNull(city.getAirports());
-        assertEquals("New York, NY (Pop: 8804190)", city.toString());
+        assertEquals("[id:1] New York, NY (Pop: 8804190)", city.toString());
     }
 
     @Test
@@ -52,6 +52,8 @@ public class CityTest {
         String detailed = city.toDetailedString();
         assertTrue(detailed.contains("New York, NY (Pop: 8804190)"));
         assertTrue(detailed.contains("JFK Airport (JFK)"));
-        assertTrue(detailed.contains("LaGuardia (LGA)"));
+        assertTrue(detailed.contains("[id:2] LaGuardia (LGA)"));
+
+
     }
 }

@@ -67,7 +67,7 @@ public class City {
 
     @Override
     public String toString() {
-        return name + ", " + state + " (Pop: " + population + ")";
+        return "[id:" + id + "] " + name + ", " + state + " (Pop: " + population + ")";
     }
 
     public String toDetailedString() {

@@ -13,7 +13,7 @@ public class AirportTest {
         assertEquals(1L, airport.getId());
         assertEquals("JFK Airport", airport.getName());
         assertEquals("JFK", airport.getCode());
-        assertEquals("JFK Airport (JFK)", airport.toString());
+        assertEquals("[id:1] JFK Airport (JFK)", airport.toString());
     }
 
     @Test
