@@ -1,5 +1,6 @@
 package org.alvio.flightcli.util;
 
+import org.alvio.flightcli.domain.Aircraft;
 import org.alvio.flightcli.domain.Airport;
 import org.alvio.flightcli.domain.City;
 
@@ -20,6 +21,10 @@ public class TestConstants {
     public static final Airport BUR = new Airport(5, "Hollywood Burbank Airport", "BUR");
     public static final Airport LGB = new Airport(6, "Long Beach Airport", "LGB");
 
+    public static final Airport ORD = new Airport(7, "O'Hare International Airport", "ORD");
+    public static final Airport SEA = new Airport(12, "Seattle-Tacoma International Airport", "SEA");
+
+
     // Cities with airports
     public static final City NY_W_AIR = new City(1, "New York", "NY", 8804190,
             List.of(JFK, LGA, EWR));
@@ -27,6 +32,19 @@ public class TestConstants {
             List.of(LAX, BUR, LGB));
     public static final City MC_W_AIR = new City(11, "Macon", "GA", 157346,
             Collections.emptyList());
+
+    // Aircrafts
+    public static final Aircraft UA_737 = new Aircraft(1, "United Airlines", 166, "Boeing 737-800");
+    public static final Aircraft UA_757 = new Aircraft(2, "United Airlines", 169, "Boeing 757-200");
+    public static final Aircraft UA_787 = new Aircraft(3, "United Airlines", 257, "Boeing 787-9 Dreamliner");
+
+    // Aircrafts with airports
+    public static final Aircraft UA_737_W_AIR = new Aircraft(1, "United Airlines", 166, "Boeing 737-800",
+            List.of(ORD), List.of(LAX));
+    public static final Aircraft UA_757_W_AIR = new Aircraft(2, "United Airlines", 169, "Boeing 757-200",
+            List.of(ORD, SEA), List.of(LAX, ORD));
+    public static final Aircraft UA_787_W_AIR = new Aircraft(3, "United Airlines", 257, "Boeing 787-9 Dreamliner",
+            Collections.emptyList(), Collections.emptyList());
 
     // JSON strings
     public static final String CITIES_SIMPLE = """
@@ -107,6 +125,93 @@ public class TestConstants {
                     "population": 157346,
                     "airports": []
                 }
+            ]
+            """;
+
+    public static final String AIRCRAFTS = """
+            [
+                 {
+                     "id": 1,
+                     "airlineName": "United Airlines",
+                     "capacity": 166,
+                     "type": "Boeing 737-800"
+                 },
+                 {
+                     "id": 2,
+                     "airlineName": "United Airlines",
+                     "capacity": 169,
+                     "type": "Boeing 757-200"
+                 },
+                 {
+                     "id": 3,
+                     "airlineName": "United Airlines",
+                     "capacity": 257,
+                     "type": "Boeing 787-9 Dreamliner"
+                 }
+            ]
+            
+            """;
+
+    public static final String AIRCRAFTS_WITH_AIRPORTS = """
+            [
+                  {
+                      "id": 1,
+                      "airlineName": "United Airlines",
+                      "capacity": 166,
+                      "type": "Boeing 737-800",
+                      "departureAirports": [
+                          {
+                              "id": 7,
+                              "name": "O'Hare International Airport",
+                              "code": "ORD"
+                          }
+                      ],
+                      "arrivalAirports": [
+                          {
+                              "id": 4,
+                              "name": "Los Angeles International Airport",
+                              "code": "LAX"
+                          }
+                      ]
+                  },
+                  {
+                      "id": 2,
+                      "airlineName": "United Airlines",
+                      "capacity": 169,
+                      "type": "Boeing 757-200",
+                      "departureAirports": [
+                          {
+                              "id": 7,
+                              "name": "O'Hare International Airport",
+                              "code": "ORD"
+                          },
+                          {
+                              "id": 12,
+                              "name": "Seattle-Tacoma International Airport",
+                              "code": "SEA"
+                          }
+                      ],
+                      "arrivalAirports": [
+                          {
+                              "id": 4,
+                              "name": "Los Angeles International Airport",
+                              "code": "LAX"
+                          },
+                          {
+                              "id": 7,
+                              "name": "O'Hare International Airport",
+                              "code": "ORD"
+                          }
+                      ]
+                  },
+                  {
+                      "id": 3,
+                      "airlineName": "United Airlines",
+                      "capacity": 257,
+                      "type": "Boeing 787-9 Dreamliner",
+                      "departureAirports": [],
+                      "arrivalAirports": []
+                  }
             ]
             """;
 }

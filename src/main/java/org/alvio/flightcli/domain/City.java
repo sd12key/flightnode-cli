@@ -72,14 +72,16 @@ public class City {
 
     public String toDetailedString() {
         String result = toString();
+        result += "\n  Airports:";
 
         if (airports != null && !airports.isEmpty()) {
-            result += "\n  Airports:";
             for (Airport airport : airports) {
                 result += "\n    - " + airport.toString();
             }
         }
-
+        else {
+            result += " None";
+        }
         return result;
     }
 

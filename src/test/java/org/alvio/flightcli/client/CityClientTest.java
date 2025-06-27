@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CityClientTest {
 
     private CityClient cityClient;
+    private HttpClient mockHttpClient;
+    private HttpResponse<String> mockResponse;
 
     private void TestCities (List<City> cities) {
         assertNotNull(cities);
@@ -45,6 +47,8 @@ public class CityClientTest {
     public void setup() {
         cityClient = new CityClient();
         cityClient.setServerUrl("http://test");
+        mockHttpClient = Mockito.mock(HttpClient.class);
+        mockResponse = Mockito.mock(HttpResponse.class);
     }
 
     @Test
@@ -83,9 +87,6 @@ public class CityClientTest {
 
     @Test
     public void testFetchCitiesWithAirportsMockedHttp() throws Exception {
-        HttpClient mockHttpClient = Mockito.mock(HttpClient.class);
-        HttpResponse<String> mockResponse = Mockito.mock(HttpResponse.class);
-
         Mockito.when(mockResponse.statusCode()).thenReturn(200);
         Mockito.when(mockResponse.body()).thenReturn(TestConstants.CITIES_WITH_AIRPORTS);
         Mockito.when(mockHttpClient.send(Mockito.any(HttpRequest.class), Mockito.any(HttpResponse.BodyHandler.class)))
@@ -108,9 +109,6 @@ public class CityClientTest {
 
     @Test
     public void testFetchCitiesWithoutAirportsMockedHttp() throws Exception {
-        HttpClient mockHttpClient = Mockito.mock(HttpClient.class);
-        HttpResponse<String> mockResponse = Mockito.mock(HttpResponse.class);
-
         Mockito.when(mockResponse.statusCode()).thenReturn(200);
         Mockito.when(mockResponse.body()).thenReturn(TestConstants.CITIES_SIMPLE);
         Mockito.when(mockHttpClient.send(Mockito.any(HttpRequest.class), Mockito.any(HttpResponse.BodyHandler.class)))
