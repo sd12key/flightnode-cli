@@ -13,11 +13,15 @@ public class City {
     public City() {
     }
 
-    public City(long id, String name, String state, int population, List<Airport> airports) {
+    public City(long id, String name, String state, int population) {
         this.id = id;
         this.name = name;
         this.state = state;
         this.population = population;
+    }
+
+    public City(long id, String name, String state, int population, List<Airport> airports) {
+        this(id, name, state, population);
         this.airports = airports;
     }
 
@@ -64,6 +68,19 @@ public class City {
     @Override
     public String toString() {
         return name + ", " + state + " (Pop: " + population + ")";
+    }
+
+    public String toDetailedString() {
+        String result = toString();
+
+        if (airports != null && !airports.isEmpty()) {
+            result += "\n  Airports:";
+            for (Airport airport : airports) {
+                result += "\n    - " + airport.toString();
+            }
+        }
+
+        return result;
     }
 
     @Override
