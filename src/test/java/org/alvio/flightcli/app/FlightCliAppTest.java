@@ -2,9 +2,10 @@ package org.alvio.flightcli.app;
 
 import org.alvio.flightcli.client.AircraftClient;
 import org.alvio.flightcli.client.CityClient;
+import org.alvio.flightcli.client.PassengerClient;
 import org.alvio.flightcli.domain.Aircraft;
-import org.alvio.flightcli.domain.Airport;
 import org.alvio.flightcli.domain.City;
+import org.alvio.flightcli.domain.Passenger;
 import org.alvio.flightcli.util.TestConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.alvio.flightcli.util.TestConstants.*;
@@ -23,6 +23,7 @@ public class FlightCliAppTest {
     private FlightCliApp app;
     private CityClient mockCityClient;
     private AircraftClient mockAircraftClient;
+    private PassengerClient mockPassengerClient;
 
     private final ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -31,10 +32,12 @@ public class FlightCliAppTest {
     public void setup() {
         mockCityClient = Mockito.mock(CityClient.class);
         mockAircraftClient = Mockito.mock(AircraftClient.class);
+        mockPassengerClient = Mockito.mock(PassengerClient.class);
 
         app = new FlightCliApp();
         app.setCityClient(mockCityClient);
         app.setAircraftClient(mockAircraftClient);
+        app.setPassengerClient(mockPassengerClient);
     }
 
     @Test
@@ -52,7 +55,6 @@ public class FlightCliAppTest {
         assertTrue(report.get(2).contains("Macon"));
         assertTrue(report.get(2).contains("157346"));
         assertTrue(report.get(2).contains("[id:11]"));
-
     }
 
     @Test
@@ -77,6 +79,40 @@ public class FlightCliAppTest {
 
         assertTrue(report.get(2).contains("Boeing 787-9"));
         assertTrue(report.get(2).contains("assigned"));
+    }
+
+    @Test
+    public void testRunPassengerWithAircraftsQuery() throws Exception {
+        List<Passenger> mockPassengers = List.of(
+                TestConstants.MARY_W_PLANES,
+                TestConstants.JAMES_W_PLANES,
+                TestConstants.SOPHIA_W_PLANES
+        );
+        Mockito.when(mockPassengerClient.fetchPassengersWithAircrafts()).thenReturn(mockPassengers);
+
+        List<String> report = app.runPassengerAircraftQuery();
+
+        assertEquals(3, report.size());
+        assertTrue(report.get(0).contains("Mary"));
+        assertTrue(report.get(0).contains("Aircrafts:"));
+        assertFalse(report.get(0).contains("Airports:"));
+    }
+
+    @Test
+    public void testRunPassengerWithAirportsQuery() throws Exception {
+        List<Passenger> mockPassengers = List.of(
+                TestConstants.MARY_W_AIRPORTS,
+                TestConstants.JAMES_W_AIRPORTS,
+                TestConstants.SOPHIA_W_AIRPORTS
+        );
+        Mockito.when(mockPassengerClient.fetchPassengersWithAirports()).thenReturn(mockPassengers);
+
+        List<String> report = app.runPassengerAirportQuery();
+
+        assertEquals(3, report.size());
+        assertTrue(report.get(0).contains("Mary"));
+        assertTrue(report.get(0).contains("Airports:"));
+        assertFalse(report.get(0).contains("Aircrafts:"));
     }
 
 }
