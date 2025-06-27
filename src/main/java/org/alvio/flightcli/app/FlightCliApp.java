@@ -2,8 +2,11 @@ package org.alvio.flightcli.app;
 
 import org.alvio.flightcli.client.AircraftClient;
 import org.alvio.flightcli.client.CityClient;
+import org.alvio.flightcli.client.PassengerClient;
 import org.alvio.flightcli.domain.Aircraft;
 import org.alvio.flightcli.domain.City;
+import org.alvio.flightcli.domain.Passenger;
+import org.alvio.flightcli.domain.Passenger.*;
 
 import java.net.http.HttpClient;
 import java.util.List;
@@ -18,6 +21,7 @@ public class FlightCliApp {
     private final Scanner scanner = new Scanner(System.in);
     private CityClient cityClient;
     private AircraftClient aircraftClient;
+    private PassengerClient passengerClient;
 
     public static void main(String[] args) {
         FlightCliApp app = new FlightCliApp();
@@ -37,16 +41,22 @@ public class FlightCliApp {
         aircraftClient.setHttpClient(sharedHttpClient);
         app.setAircraftClient(aircraftClient);
 
+        // passenger client setup
+        PassengerClient passengerClient = new PassengerClient();
+        passengerClient.setServerUrl(baseUrl);
+        passengerClient.setHttpClient(sharedHttpClient);
+        app.setPassengerClient(passengerClient);
+
         app.runMenu();
     }
 
     public void setCityClient(CityClient cityClient) {
         this.cityClient = cityClient;
     }
-
     public void setAircraftClient(AircraftClient aircraftClient) {
         this.aircraftClient = aircraftClient;
     }
+    public void setPassengerClient(PassengerClient passengerClient) { this.passengerClient = passengerClient; }
 
     public void runMenu() {
         while (true) {
@@ -67,9 +77,17 @@ public class FlightCliApp {
                     System.out.println("\n--> GET /api/cities?show-airports=true\n");
                     queryReport = runCityAirportQuery();
                 }
+                case "2" -> {
+                    System.out.println("\n--> GET /api/passengers?show-aircrafts=true\n");
+                    queryReport = runPassengerAircraftQuery();
+                }
                 case "3" -> {
                     System.out.println("\n--> GET /api/aircrafts?show-airports=true\n");
                     queryReport = runAircraftAirportQuery();
+                }
+                case "4" -> {
+                    System.out.println("\n--> GET /api/passengers?show-airports=true\n");
+                    queryReport = runPassengerAirportQuery();
                 }
                 case "0" -> {
                     System.out.println("=========== Goodbye! ==========\n");
@@ -103,5 +121,28 @@ public class FlightCliApp {
             return List.of(msg);
         }
     }
+
+    public List<String> runPassengerAircraftQuery() {
+        try {
+            List<Passenger> passengers = passengerClient.fetchPassengersWithAircrafts();
+            return generateStringReport(passengers, p -> p.toDetailedString(PassengerDetailMode.AIRCRAFTS_ONLY));
+        } catch (Exception e) {
+            String msg = "Error retrieving passengers (aircrafts): " + e.getClass().getSimpleName();
+            if (e.getMessage() != null) msg += " - " + e.getMessage();
+            return List.of(msg);
+        }
+    }
+
+    public List<String> runPassengerAirportQuery() {
+        try {
+            List<Passenger> passengers = passengerClient.fetchPassengersWithAirports();
+            return generateStringReport(passengers, p -> p.toDetailedString(PassengerDetailMode.AIRPORTS_ONLY));
+        } catch (Exception e) {
+            String msg = "Error retrieving passengers (airports): " + e.getClass().getSimpleName();
+            if (e.getMessage() != null) msg += " - " + e.getMessage();
+            return List.of(msg);
+        }
+    }
+
 
 }

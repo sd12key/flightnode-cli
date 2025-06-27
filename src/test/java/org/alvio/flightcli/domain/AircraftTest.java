@@ -1,6 +1,5 @@
 package org.alvio.flightcli.domain;
 
-import org.alvio.flightcli.util.TestConstants;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
