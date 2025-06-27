@@ -42,7 +42,7 @@ public class Airport {
 
     @Override
     public String toString() {
-        return name + " (" + code + ")";
+        return "[id:" + id + "] " + name + " (" + code + ")";
     }
 
     @Override
